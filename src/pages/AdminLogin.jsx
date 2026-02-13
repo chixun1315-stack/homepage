@@ -1,11 +1,20 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Lock } from 'lucide-react';
+import { Lock, Mail, Eye, EyeOff } from 'lucide-react';
 
 const AdminLogin = () => {
-    const { loginWithGoogle, isAuthenticated } = useAuth();
+    const { login, signup, isAuthenticated } = useAuth();
     const navigate = useNavigate();
+    
+    const [isSignup, setIsSignup] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -13,9 +22,59 @@ const AdminLogin = () => {
         }
     }, [isAuthenticated, navigate]);
 
-    const handleGoogleLogin = () => {
-        if (loginWithGoogle()) {
-            navigate(-1); // Go back to previous page or home
+    const validateForm = () => {
+        if (!email || !password) {
+            setError('이메일과 비밀번호를 입력해주세요.');
+            return false;
+        }
+        
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            setError('유효한 이메일을 입력해주세요.');
+            return false;
+        }
+
+        if (password.length < 6) {
+            setError('비밀번호는 최소 6자 이상이어야 합니다.');
+            return false;
+        }
+
+        if (isSignup && password !== confirmPassword) {
+            setError('비밀번호가 일치하지 않습니다.');
+            return false;
+        }
+
+        return true;
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+
+        if (!validateForm()) {
+            return;
+        }
+
+        setLoading(true);
+        try {
+            if (isSignup) {
+                await signup(email, password);
+            } else {
+                await login(email, password);
+            }
+            navigate('/');
+        } catch (err) {
+            // Firebase 에러 메시지 한국어로 변환
+            const errorMessages = {
+                'auth/email-already-in-use': '이미 가입된 이메일입니다.',
+                'auth/user-not-found': '가입되지 않은 이메일입니다.',
+                'auth/wrong-password': '비밀번호가 잘못되었습니다.',
+                'auth/invalid-email': '유효하지 않은 이메일입니다.',
+                'auth/weak-password': '비밀번호가 너무 약합니다.',
+            };
+            
+            setError(errorMessages[err.code] || err.message || '오류가 발생했습니다.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -28,50 +87,132 @@ const AdminLogin = () => {
                     <div className="inline-flex p-5 rounded-full bg-white/5 text-primary mb-6 ring-1 ring-white/10">
                         <Lock size={40} strokeWidth={1.5} />
                     </div>
-                    <h1 className="text-4xl font-black tracking-tight mb-4">로그인이 필요합니다</h1>
+                    <h1 className="text-4xl font-black tracking-tight mb-4">
+                        {isSignup ? '회원가입' : '로그인'}
+                    </h1>
                     <p className="text-secondary leading-relaxed">
-                        문의 폼 작성 및 관리자 기능을 이용하시려면<br />
-                        Google 계정으로 로그인해 주세요.
+                        {isSignup 
+                            ? '계정을 생성하세요.' 
+                            : '문의 폼 작성 및 관리자 기능을 이용하시려면로그인해주세요.'}
                     </p>
                 </div>
 
-                <div className="space-y-4">
-                    <button
-                        onClick={handleGoogleLogin}
-                        className="w-full flex items-center justify-center gap-4 bg-white text-black hover:bg-gray-100 py-4 px-6 rounded-2xl font-bold text-lg transition-all duration-300 shadow-xl group"
-                    >
-                        <svg className="w-6 h-6" viewBox="0 0 24 24">
-                            <path
-                                fill="#4285F4"
-                                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                            />
-                            <path
-                                fill="#34A853"
-                                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                            />
-                            <path
-                                fill="#FBBC05"
-                                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
-                            />
-                            <path
-                                fill="#EA4335"
-                                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                            />
-                        </svg>
-                        Google 계정으로 계속하기
-                    </button>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Error Message */}
+                    {error && (
+                        <div className="bg-red-500/20 border border-red-500/50 rounded-xl p-4 text-red-400 text-sm">
+                            {error}
+                        </div>
+                    )}
 
+                    {/* Email Input */}
+                    <div className="space-y-2">
+                        <label htmlFor="email" className="block text-white font-semibold">
+                            이메일
+                        </label>
+                        <div className="relative">
+                            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary" size={20} />
+                            <input
+                                id="email"
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="example@email.com"
+                                className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Password Input */}
+                    <div className="space-y-2">
+                        <label htmlFor="password" className="block text-white font-semibold">
+                            비밀번호
+                        </label>
+                        <div className="relative">
+                            <input
+                                id="password"
+                                type={showPassword ? 'text' : 'password'}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="••••••••"
+                                className="w-full bg-white/5 border border-white/10 rounded-xl pl-4 pr-10 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary hover:text-white transition-colors"
+                            >
+                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Confirm Password Input (Signup only) */}
+                    {isSignup && (
+                        <div className="space-y-2">
+                            <label htmlFor="confirmPassword" className="block text-white font-semibold">
+                                비밀번호 확인
+                            </label>
+                            <div className="relative">
+                                <input
+                                    id="confirmPassword"
+                                    type={showConfirmPassword ? 'text' : 'password'}
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    placeholder="••••••••"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-4 pr-10 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary hover:text-white transition-colors"
+                                >
+                                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Submit Button */}
                     <button
-                        onClick={() => navigate('/')}
-                        className="w-full py-4 text-secondary hover:text-white transition-colors text-sm font-medium"
+                        type="submit"
+                        disabled={loading}
+                        className="w-full bg-gradient-to-r from-blue-500 to-red-500 hover:from-blue-600 hover:to-red-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-xl"
                     >
-                        메인 페이지로 돌아가기
+                        {loading ? '진행 중...' : (isSignup ? '회원가입' : '로그인')}
                     </button>
+                </form>
+
+                {/* Toggle Signup/Login */}
+                <div className="mt-8 text-center">
+                    <p className="text-secondary text-sm">
+                        {isSignup ? '이미 계정이 있으신가요?' : '계정이 없으신가요?'}
+                        <button
+                            onClick={() => {
+                                setIsSignup(!isSignup);
+                                setError('');
+                                setEmail('');
+                                setPassword('');
+                                setConfirmPassword('');
+                            }}
+                            className="ml-2 text-primary hover:text-blue-400 font-semibold transition-colors"
+                        >
+                            {isSignup ? '로그인' : '회원가입'}
+                        </button>
+                    </p>
                 </div>
 
-                <div className="mt-12 pt-8 border-t border-white/5 text-center">
+                {/* Back to Home */}
+                <button
+                    onClick={() => navigate('/')}
+                    className="w-full mt-6 py-3 text-secondary hover:text-white transition-colors text-sm font-medium"
+                >
+                    메인 페이지로 돌아가기
+                </button>
+
+                <div className="mt-8 pt-8 border-t border-white/5 text-center">
                     <p className="text-xs text-secondary/40 font-medium tracking-widest uppercase">
-                        Secure Authentication by Google
+                        Secure Authentication by Firebase
                     </p>
                 </div>
             </div>
