@@ -60,6 +60,16 @@ const QuoteRequest = () => {
                                 </div>
                             </div>
                         </div>
+
+                        {/* 유지보수 작업 이미지 */}
+                        <div className="mt-8 relative overflow-hidden rounded-2xl group">
+                            <img
+                                src="https://github.com/chixun1314/imgage-center/blob/main/%ED%97%AC%EC%8A%A4%EC%9E%A5%20%EC%9A%B4%EB%8F%99%EA%B8%B0%EA%B5%AC%20%EC%88%98%EB%A6%AC%20%EC%9C%A0%EC%A7%80%EB%B3%B4%EC%88%98%20(7).png?raw=true"
+                                alt="BODY SPORTS"
+                                className="w-full h-[300px] object-cover rounded-2xl transition-transform duration-500 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-2xl"></div>
+                        </div>
                     </div>
 
                     <div className="glass p-8 md:p-12 rounded-3xl relative overflow-hidden group">

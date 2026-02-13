@@ -77,6 +77,36 @@ const Blog = () => {
                         </a>
                     ))}
                 </div>
+
+                {/* 유지보수 작업 이미지 갤러리 */}
+                <div className="mt-20">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="relative overflow-hidden rounded-2xl group">
+                            <img
+                                src="https://github.com/chixun1314/imgage-center/blob/main/%ED%97%AC%EC%8A%A4%EC%9E%A5%20%EC%9A%B4%EB%8F%99%EA%B8%B0%EA%B5%AC%20%EC%88%98%EB%A6%AC%20%EC%9C%A0%EC%A7%80%EB%B3%B4%EC%88%98%20(4).png?raw=true"
+                                alt="BODY SPORTS 유지보수 작업 1"
+                                className="w-full h-[300px] object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        </div>
+                        <div className="relative overflow-hidden rounded-2xl group">
+                            <img
+                                src="https://github.com/chixun1314/imgage-center/blob/main/%ED%97%AC%EC%8A%A4%EC%9E%A5%20%EC%9A%B4%EB%8F%99%EA%B8%B0%EA%B5%AC%20%EC%88%98%EB%A6%AC%20%EC%9C%A0%EC%A7%80%EB%B3%B4%EC%88%98%20(3).png?raw=true"
+                                alt="BODY SPORTS 유지보수 작업 2"
+                                className="w-full h-[300px] object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        </div>
+                        <div className="relative overflow-hidden rounded-2xl group">
+                            <img
+                                src="https://github.com/chixun1314/imgage-center/blob/main/%ED%97%AC%EC%8A%A4%EC%9E%A5%20%EC%9A%B4%EB%8F%99%EA%B8%B0%EA%B5%AC%20%EC%88%98%EB%A6%AC%20%EC%9C%A0%EC%A7%80%EB%B3%B4%EC%88%98%20(2).png?raw=true"
+                                alt="BODY SPORTS 유지보수 작업 3"
+                                className="w-full h-[300px] object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
     );

@@ -58,6 +58,30 @@ const ASService = () => {
                     ))}
                 </div>
 
+                {/* 유지보수 작업 이미지 갤러리 */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+                    <div className="relative overflow-hidden rounded-3xl group">
+                        <img
+                            src="https://github.com/chixun1314/imgage-center/blob/main/%ED%97%AC%EC%8A%A4%EC%9E%A5%20%EC%9A%B4%EB%8F%99%EA%B8%B0%EA%B5%AC%20%EC%88%98%EB%A6%AC%20%EC%9C%A0%EC%A7%80%EB%B3%B4%EC%88%98%20(6).png?raw=true"
+                            alt="BODY SPORTS 전문 유지보수 작업"
+                            className="w-full h-[400px] object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                            <p className="text-white font-bold text-lg">전문 엔지니어의 정밀 작업</p>
+                        </div>
+                    </div>
+                    <div className="relative overflow-hidden rounded-3xl group">
+                        <img
+                            src="https://github.com/chixun1314/imgage-center/blob/main/%ED%97%AC%EC%8A%A4%EC%9E%A5%20%EC%9A%B4%EB%8F%99%EA%B8%B0%EA%B5%AC%20%EC%88%98%EB%A6%AC%20%EC%9C%A0%EC%A7%80%EB%B3%B4%EC%88%98%20(5).png?raw=true"
+                            alt="BODY SPORTS 기구 수리 및 점검"
+                            className="w-full h-[400px] object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                            <p className="text-white font-bold text-lg">정품 부품을 사용한 수리</p>
+                        </div>
+                    </div>
+                </div>
+
                 <div className="max-w-3xl mx-auto glass p-8 md:p-12 rounded-[2rem] relative overflow-hidden group">
                     {!isAuthenticated ? (
                         <div className="flex flex-col items-center justify-center py-20 text-center">
